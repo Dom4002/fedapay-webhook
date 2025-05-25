@@ -9,9 +9,13 @@ app.post('/webhook-fedapay', async (req, res) => {
   console.log('📥 Webhook reçu le', new Date().toISOString());
   console.log('Charge utile : ', event);
 
-  const statut = event.statut ? event.statut.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase() : '';
+  const statutBrut = event.statut || '';
+  const statut = statutBrut.normalize('NFD')
+                           .replace(/[\u0300-\u036f]/g, '') // enlève accents
+                           .toLowerCase()
+                           .replace(/[^a-z]/g, '');         // enlève caractères spéciaux
 
-  console.log('statut brut:', event.statut);
+  console.log('statut brut:', statutBrut);
   console.log('statut nettoyé:', statut);
 
   if (statut === 'succes') {
