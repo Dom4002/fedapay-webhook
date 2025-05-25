@@ -10,10 +10,11 @@ app.post('/webhook-fedapay', async (req, res) => {
   console.log('Charge utile : ', event);
 
   const statutBrut = event.statut || '';
-  const statut = statutBrut.normalize('NFD')
-                           .replace(/[\u0300-\u036f]/g, '') // enlève accents
-                           .toLowerCase()
-                           .replace(/[^a-z]/g, '');         // enlève caractères spéciaux
+  const statut = statutBrut
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // enlève les accents
+    .toLowerCase()
+    .replace(/[^a-z]/g, '');         // enlève caractères spéciaux
 
   console.log('statut brut:', statutBrut);
   console.log('statut nettoyé:', statut);
@@ -21,14 +22,18 @@ app.post('/webhook-fedapay', async (req, res) => {
   if (statut === 'succes') {
     const montant = event.montant || 0;
     const description = event.description || 'Pas de description';
-    const numero = '22954978999';
-    const apikey = '5302554';
+    const numero = '22954978999'; // Remplace par ton numéro
+    const apikey = '5302554';     // Remplace par ta vraie clé API CallMeBot
 
-    const message = encodeURIComponent(`✅ Nouvelle commande validée !
-Montant : ${montant} FCFA
-🛍️ Détail : ${description}`);
+    // Un seul message sans saut de ligne
+    const message = encodeURIComponent(
+      `✅ Nouvelle commande validée ! Montant : ${montant} FCFA | 🛍️ Détail : ${description}`
+    );
 
     const url = `https://api.callmebot.com/whatsapp.php?phone=${numero}&text=${message}&apikey=${apikey}`;
+
+    // Debug de l’URL construite
+    console.log("🔗 URL CallMeBot :", url);
 
     try {
       await axios.get(url);
