@@ -1,3 +1,9 @@
+const express = require('express');
+const axios = require('axios');
+const app = express();
+
+app.use(express.json());
+
 app.post('/webhook-fedapay', async (req, res) => {
   const event = req.body;
   console.log('📥 Webhook reçu le', new Date().toISOString());
@@ -31,4 +37,9 @@ Montant : ${montant} FCFA
   }
 
   res.status(200).send('ok');
+});
+
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => {
+  console.log(`🚀 Serveur webhook Fedapay lancé sur le port ${PORT}`);
 });
